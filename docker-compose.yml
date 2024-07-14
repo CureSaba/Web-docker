@@ -1,0 +1,37 @@
+services:
+  mysql:
+    image: mysql
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+    restart: always
+  php:
+    image: php:apache
+    volumes:
+      - ./php:/usr/local/etc/php
+      - ./html:/var/www/html
+    ports:
+      - 8080:80
+    restart: always
+    depends_on:
+      - mysql
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=test
+      - PMA_PASSWORD=test
+    links:
+      - mysql
+    ports:
+      - 4040:80
+    volumes:
+      - ./phpmyadmin/sessions:/sessions
+    restart: always
+    depends_on:
+      - mysql
